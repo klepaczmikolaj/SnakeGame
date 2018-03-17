@@ -2,6 +2,7 @@
 package snakegame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
@@ -24,8 +25,12 @@ public class GraphicsPanel extends JPanel {
         setSize(xSize,ySize);
         this.setBackground(Color.black);
         super.paintComponent(g);
-        drawBoard(g);
+        if(gameBoard.isGameOver())
+            drawGameOverScreen(g);
+        else
+            drawBoard(g);
     }
+    
     private void drawBoard(Graphics g){
         g.setColor(Color.blue);
         for(int i = 0; i<gameBoard.numberOfElements; i++)
@@ -34,5 +39,11 @@ public class GraphicsPanel extends JPanel {
                     g.fillRect(1 + i*(gameBoard.elementSize + 1), 
                             1+j*(gameBoard.elementSize + 1), 
                             gameBoard.elementSize, gameBoard.elementSize);
+    }
+    
+    private void drawGameOverScreen(Graphics g){
+        g.setFont(new Font(Font.DIALOG, Font.PLAIN, 45));
+        g.setColor(Color.white);
+        g.drawString("Game Over", xSize/5, ySize/2);
     }
 }

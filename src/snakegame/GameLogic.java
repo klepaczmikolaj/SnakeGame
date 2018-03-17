@@ -19,12 +19,11 @@ public class GameLogic {
                 gameBoard.snake.addElementBeg(gameBoard.foodPoint.x, gameBoard.foodPoint.y);
                 initializeFoodPoint();
             }
-            if(isGameOver()){
+            
+            if(gameBoard.isGameOver()){
                 globalTimer.cancel();
                 globalTimer.purge();
-                timerTask.cancel();
-                isRunning = false;
-                return;
+                window.repaint();
             }
             updateBoard();
             window.repaint();
@@ -38,7 +37,6 @@ public class GameLogic {
     private int numberOfElements;
     private int elementSize;
     private int timeDelay;
-    private boolean isRunning;
     Timer globalTimer;
     MyTimerTask timerTask;
     
@@ -52,15 +50,9 @@ public class GameLogic {
     
     public void gameLoop(){
         timeDelay = 200;
-        isRunning = false;
-        while(true){
-            if(!isRunning){
-                initializeGame();
-                isRunning = true;
-                globalTimer.schedule(timerTask, timeDelay, timeDelay);
-            }
-            window.repaint();
-        }
+        initializeGame();
+        globalTimer.schedule(timerTask, timeDelay, timeDelay);
+        
     }
     private void initializeGame(){
         globalTimer = new Timer();
@@ -96,26 +88,7 @@ public class GameLogic {
         Coords foodPoint = gameBoard.foodPoint;
         gameBoard.setElementTrue(foodPoint.x, foodPoint.y);
     }
-    private boolean isGameOver(){
-        Coords headCoords = new Coords(gameBoard.snake.getCoords(0));
-        int x = headCoords.x;
-        int y = headCoords.y;
-        int max = gameBoard.numberOfElements;
-        if(!(x != -1 && x != max && y != -1 && y != max))
-            return true;
-        else 
-            return isTailEaten();
-    }
-    private boolean isTailEaten(){
-        Coords tempCoords;
-        Coords headCoords = new Coords(gameBoard.snake.getCoords(0));
-        for(int i = 2; i < gameBoard.snake.getSize(); i++){
-            tempCoords = gameBoard.snake.getCoords(i);
-            if(tempCoords.x == headCoords.x && tempCoords.y == headCoords.y)
-                return true;
-        }
-        return false;
-    }
+    
     private void moveSnake(){
         Snake snake = new Snake();
         snake = addNewHead(snake);
@@ -123,6 +96,7 @@ public class GameLogic {
         gameBoard.snake = snake;
         
     }
+    
     private Snake addRemainingBody(Snake snake){
         Coords tempCoords;
         for(int i = 0; i < gameBoard.snake.getSize() - 1; i++){
@@ -131,6 +105,7 @@ public class GameLogic {
         }
         return snake;
     }
+    
     private Snake addNewHead(Snake snake){
         Coords snakeHead = new Coords(gameBoard.snake.getCoords(0));
         snake.setDirection(gameBoard.snake.getDirection());
@@ -145,11 +120,13 @@ public class GameLogic {
         snake.addElement(snakeHead.x, snakeHead.y);
         return snake;
     }
+    
     private void initializeFoodPoint(){
         
         gameBoard.foodPoint.x = ran.nextInt(numberOfElements);
         gameBoard.foodPoint.y = ran.nextInt(numberOfElements);
     }
+    
     private boolean isFoodEaten(){
         Coords snakeHead = new Coords(gameBoard.snake.getCoords(0));
         return snakeHead.x == gameBoard.foodPoint.x && 
